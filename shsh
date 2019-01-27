@@ -1,0 +1,8 @@
+#!/bin/sh
+
+while :
+do
+	read -p ">> " line
+	echo "You typed: $line"
+	sh -c "$line"
+done
