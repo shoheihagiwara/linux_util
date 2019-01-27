@@ -1,5 +1,4 @@
 ##### bellow is added from my_bashrc #####
-# User specific aliases and functions
 alias dexec='sudo docker exec'
 alias dimages='sudo docker images'
 alias dps='sudo docker ps -a'
