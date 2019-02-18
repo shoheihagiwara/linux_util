@@ -1,0 +1,39 @@
+#!/bin/bash
+
+usage () { 
+  echo "Usage:   $(basename $0) [FILE]     [POS_ARG]..."
+  echo "Example: $(basename $0) access_log 2 3 5 8" 
+  exit 1
+}
+
+pipestatus_all_ok () {
+
+  status=($PIPESTATUS)
+  for s in $status ; do
+    if [ ! $s = 0 ] ; then
+      return 1
+    fi 
+  done
+  return 0
+
+}
+
+# save file path
+filepath="$1"
+shift
+
+# parse arguments and prefix it with '$' and suffix with ","
+arglist=()
+for arg in "$@" ; do
+   arglist+=(\$"$arg",) 
+done
+
+# the last "," is unnecessary. remove.
+lastarg=${arglist[-1]}
+arglist[-1]=${lastarg:0:-1}
+
+# awk with new arguments. show usage upon fail.
+cat "${filepath}" | awk "{ print ${arglist[*]} }" | column -t
+if ! pipestatus_all_ok ; then
+  usage
+fi
