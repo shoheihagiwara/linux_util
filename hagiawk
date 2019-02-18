@@ -1,8 +1,14 @@
 #!/bin/bash
 
 usage () { 
+  echo "$(basename $0) prints file with column numbers or specified columns."
   echo "Usage:   $(basename $0) [FILE]     [POS_ARG]..."
-  echo "Example: $(basename $0) access_log 2 3 5 8" 
+  echo "Examples: 
+           # prints column numbers
+           $(basename $0) access_log
+
+           # prints columns
+           $(basename $0) access_log 2 3 5 8" 
   exit 1
 }
 
@@ -18,9 +24,22 @@ pipestatus_all_ok () {
 
 }
 
+if [ $# = 0 ] ; then
+  usage
+fi
+
 # save file path
 filepath="$1"
 shift
+
+# when no arguments, print column numbers for each line
+if [ $# = 0 ] ; then
+    awk '{ for ( i=1; i<=NF ; i++ ) printf "$" i " " ; print "" ; print $0}' $filepath  | column -t
+    if ! pipestatus_all_ok ; then
+      usage
+    fi
+    exit 0
+fi
 
 # parse arguments and prefix it with '$' and suffix with ","
 arglist=()
